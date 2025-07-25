@@ -50,7 +50,7 @@ const App = () => {
   const isConnected = status === 'connected';
 
   return (
-    <div className="h-[100dvh] overflow-auto bg-gradient-to-br from-slate-50 via-blue-50 to-teal-50 text-slate-800 font-sans flex flex-col items-center justify-center p-0">
+    <div className="h-[100dvh] overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-teal-50 text-slate-800 font-sans flex flex-col items-center justify-center p-0">
       <header className="absolute top-0 left-0 p-6 flex items-center gap-3">
         <img src={logo} alt="Voxllera" className="h-12 w-auto object-contain" />
         <span className="text-2xl font-bold text-slate-600 leading-tight">VOXLLERA</span>
