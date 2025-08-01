@@ -50,20 +50,16 @@ const Dashboard = () => {
   const isConnected = status === 'connected';
 
   return (
-    <div className="h-[100dvh] overflow-auto bg-gradient-to-br from-blue-100 via-green-100 to-red-100 text-slate-800 font-sans flex flex-col items-center justify-center p-0">
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-green-100 to-red-100 text-slate-800 font-sans flex flex-col items-center px-4 pt-32 pb-4">
       <header className="absolute top-0 left-0 p-6 flex items-center gap-3">
         <img src={logo} alt="Voxllera" className="h-12 w-auto object-contain" />
         <span className="text-2xl font-bold text-slate-600 leading-tight">VOXLLERA</span>
       </header>
 
-
-      <div className="flex-1 flex flex-col items-center justify-center w-full sm:mt-0 mt-12">
+      <div className="w-full max-w-lg flex flex-col items-center">
         {/* Orb Container */}
         <div className="relative w-64 h-64 rounded-full shadow-2xl animate-pulse-slow flex items-center justify-center">
-          {/* Outer Animated Glow */}
           <div className="absolute inset-0 rounded-full bg-radial-glow" />
-
-          {/* Inner Orb */}
           <div className="relative z-10 w-48 h-48 rounded-full bg-white bg-opacity-30 backdrop-blur-md flex flex-col items-center justify-center border border-white border-opacity-50 shadow-inner">
             {isBusy ? (
               <Loader2 className="animate-spin text-white" size={40} />
@@ -94,7 +90,7 @@ const Dashboard = () => {
 
         {/* Title */}
         <div className="text-center space-y-4 max-w-2xl mt-6">
-        <h1 className="text-[clamp(1.75rem,5vw,3rem)] font-bold text-slate-800 leading-tight px-4 text-center">
+          <h1 className="text-[clamp(1.75rem,5vw,3rem)] font-bold text-slate-800 leading-tight px-4 text-center">
             Speak with your
             <span className="bg-gradient-to-r from-sky-800 via-teal-800 to-rose-800 bg-clip-text text-transparent block">
               AI Receptionist
@@ -103,27 +99,45 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Call Button */}
-      <button
-        onClick={toggleCall}
-        disabled={isBusy}
-        className={`sm:mb-4 px-6 sm:px-10 py-3 sm:py-4 text-[clamp(1rem,2.5vw,1.25rem)] font-semibold rounded-2xl transition-all duration-300 shadow-lg ${
-          isConnected
-            ? 'bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white'
-            : 'bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-white'
-        } ${isBusy ? 'opacity-50 cursor-not-allowed' : 'hover:-translate-y-1 hover:shadow-xl'}`}
-      >
-        {status === 'connecting'
-          ? 'Connecting...'
-          : status === 'disconnecting'
-          ? 'Ending Call...'
-          : isConnected
-          ? 'End Call'
-          : 'Call Voxllera'}
-      </button>
+      {/* Call Buttons */}
+      <div className="flex flex-wrap gap-4 justify-center mt-8">
+        <button
+          onClick={toggleCall}
+          disabled={isBusy}
+          className={`px-6 sm:px-10 py-3 sm:py-4 text-[clamp(1rem,2.5vw,1.25rem)] font-semibold rounded-2xl transition-all duration-300 shadow-lg ${
+            isConnected
+              ? 'bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white'
+              : 'bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-white'
+          } ${isBusy ? 'opacity-50 cursor-not-allowed' : 'hover:-translate-y-1 hover:shadow-xl'}`}
+        >
+          📞 {status === 'connecting'
+            ? 'Connecting...'
+            : status === 'disconnecting'
+            ? 'Ending Call...'
+            : isConnected
+            ? 'End Call'
+            : 'Call Voxllera'}
+        </button>
+
+        <button
+          className={`px-6 sm:px-10 py-3 sm:py-4 text-[clamp(1rem,2.5vw,1.25rem)] font-semibold rounded-2xl transition-all duration-300 shadow-lg ${
+            isConnected
+              ? 'bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white'
+              : 'bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-white'
+          } ${isBusy ? 'opacity-50 cursor-not-allowed' : 'hover:-translate-y-1 hover:shadow-xl'}`}
+        >
+          📲 {status === 'connecting'
+            ? 'Connecting...'
+            : status === 'disconnecting'
+            ? 'Ending Call...'
+            : isConnected
+            ? 'End Call'
+            : 'Incoming Call from Voxllera'}
+        </button>
+      </div>
 
       {/* Status Indicators */}
-      <div className="mb-12 space-y-9">
+      <div className="mt-4 space-y-9">
         {isConnected && (
           speaking ? (
             <div className="flex items-center justify-center gap-3 text-blue-600 bg-blue-50 px-4 py-2 rounded-full">
@@ -131,21 +145,21 @@ const Dashboard = () => {
               <span className="font-medium">Agent Speaking...</span>
             </div>
           ) : (
-            <div className="flex items-center justify-center gap-3 text-teal-600 bg-teal-50 px-4 py-2 sm:mt-0 mt-3 rounded-full">
+            <div className="flex items-center justify-center gap-3 text-teal-600 bg-teal-50 px-4 py-2 rounded-full">
               <Mic size={20} className="animate-pulse" />
               <span className="font-medium">Listening...</span>
             </div>
           )
         )}
         {!isMicGranted && status === 'disconnected' && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-2 sm:mt-0 mt-3.5 rounded-full text-sm">
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-full text-sm">
             🎤 Microphone access is required to proceed
           </div>
         )}
       </div>
 
       {/* Footer */}
-      <footer className="absolute bottom-4 text-sm text-slate-600">
+      <footer className="mt-4 text-sm text-slate-600">
         <span className="ml-2 text-slate-500 font-medium">Voxllera Healthcare AI</span>
       </footer>
 
