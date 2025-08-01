@@ -1,17 +1,114 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../logo.png';
 import '../index.css';
 import '../styles.css';
 
 const SHEET_URL =
-  'https://script.google.com/macros/s/AKfycbxU5VCkVcCl9QL_oatnVaDkCS03bvLnk4pCkJ0NLkBWjNPcvxHk9Xpl4cYGxGRgRIq1/exec';
+  'https://script.google.com/macros/s/AKfycby0vUPNj1o7fp2zYxK08IN-0NwaDPOtHJJzL7RkPngsuiXgN6iWjdyUOENG33jpYQP2/exec';
+
+const clinicOptions = ['Dental', 'GP', 'Pediatric', 'Dermatology', 'Other'];
+
+const CustomDropdown = ({ value, onChange }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [direction, setDirection] = useState('down');
+  const dropdownRef = useRef(null);
+  const buttonRef = useRef(null);
+
+  const toggleDropdown = () => setIsOpen(!isOpen);
+
+  const handleOptionClick = (option) => {
+    onChange(option);
+    setIsOpen(false);
+  };
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const updateDirection = () => {
+      const dropdown = dropdownRef.current;
+      const button = buttonRef.current;
+
+      if (!dropdown || !button) return;
+
+      const buttonRect = button.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const dropdownHeight = dropdown.offsetHeight;
+
+      const spaceBelow = viewportHeight - buttonRect.bottom;
+      const spaceAbove = buttonRect.top;
+
+      if (spaceBelow >= dropdownHeight || spaceBelow >= spaceAbove) {
+        setDirection('down');
+      } else {
+        setDirection('up');
+      }
+    };
+
+    updateDirection();
+    window.addEventListener('resize', updateDirection);
+
+    return () => window.removeEventListener('resize', updateDirection);
+  }, [isOpen]);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(e.target)
+      ) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  return (
+    <div className="relative w-full mt-1 rounded-xl">
+      <div className="group focus-within:bg-gradient-to-r focus-within:from-sky-300 focus-within:via-teal-300 focus-within:to-rose-300 p-[2px] rounded-xl appearance-none">
+      <button
+        type="button"
+        ref={buttonRef}
+        onClick={toggleDropdown}
+        className="w-full px-4 py-2 bg-white border border-gray-300 rounded-xl text-left focus:outline-none shadow-sm"
+      >
+        {value || 'Select clinic type'}
+        <span className="float-right text-gray-500">▼</span>
+      </button>
+
+      {isOpen && (
+        <ul
+          ref={dropdownRef}
+          className={`absolute z-50 w-full bg-white border border-gray-300 rounded-xl shadow-md max-h-60 overflow-y-auto transition-all ${
+            direction === 'up' ? 'bottom-full mb-2' : 'top-full mt-2'
+          }`}
+        >
+          {clinicOptions.map((option) => (
+            <li
+              key={option}
+              onClick={() => handleOptionClick(option)}
+              className={`px-4 py-2 cursor-pointer hover:bg-gray-100 ${
+                option === value ? 'font-semibold text-teal-700' : ''
+              }`}
+            >
+              {option}
+            </li>
+          ))}
+        </ul>
+      )}
+      </div>
+    </div>
+  );
+};
 
 const Signup = () => {
   const navigate = useNavigate();
   const containerRef = useRef(null);
 
-  const [clinicName, setClinicName] = useState('');
+  const [organization, setOrganization] = useState('');
   const [contactPerson, setContactPerson] = useState('');
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -20,16 +117,21 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const phoneRegex = /^\+?[0-9\s\-().]{7,20}$/;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!contactPerson || !email || !phoneNumber) {
+    if (!contactPerson || !email || !organization) {
       setError('Please fill in all required fields.');
       return;
     }
     if (!emailRegex.test(email)) {
       setError('Please enter a valid email.');
+      return;
+    }
+    if (phoneNumber && !phoneRegex.test(phoneNumber)) {
+      setError('Please enter a valid phone number.');
       return;
     }
 
@@ -41,7 +143,7 @@ const Signup = () => {
         method: 'POST',
         body: new URLSearchParams({
           action: 'signup',
-          clinicName,
+          organization,
           contactPerson,
           email,
           phoneNumber,
@@ -68,7 +170,7 @@ const Signup = () => {
         <div className="fixed inset-0 z-50 bg-white/40 backdrop-blur-sm flex flex-col items-center justify-center">
           <img src={logo} alt="Logo" className="h-20 w-20 mb-6 animate-pulse" />
           <div className="w-40 h-2 bg-gray-200 rounded-full overflow-hidden">
-            <div className="h-full w-full bg-gradient-to-r from-teal-400 via-blue-500 to-rose-400 animate-slide" />
+            <div className="h-full w-full bg-gradient-to-r from-teal-400 via-blue-400 to-rose-400 animate-slide" />
           </div>
 
           <style jsx="true">{`
@@ -108,34 +210,32 @@ const Signup = () => {
               <label className="text-sm font-bold text-gray-600">
                 Contact Person <span className="text-red-500">*</span>
               </label>
-
-              <div className="mt-1 rounded-xl transition-all">
+              <div className="mt-1 rounded-xl">
                 <div className="group focus-within:bg-gradient-to-r focus-within:from-sky-300 focus-within:via-teal-300 focus-within:to-rose-300 p-[2px] rounded-xl appearance-none">
                   <input
                     type="text"
                     value={contactPerson}
                     onChange={(e) => setContactPerson(e.target.value)}
                     placeholder="Dr. John Smith"
-                    className="w-full px-4 py-2 rounded-xl border border-gray-300 bg-white focus:outline-none appearance-none"
+                    className="w-full px-4 py-2 rounded-xl border border-gray-300 bg-white focus:outline-none"
                     required
                   />
                 </div>
               </div>
             </div>
-
 
             <div>
               <label className="text-sm font-bold text-gray-600">
                 Email Address <span className="text-red-500">*</span>
               </label>
-              <div className="mt-1 rounded-xl transition-all">
+              <div className="mt-1 rounded-xl">
                 <div className="group focus-within:bg-gradient-to-r focus-within:from-sky-300 focus-within:via-teal-300 focus-within:to-rose-300 p-[2px] rounded-xl appearance-none">
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="doctor@clinic.com"
-                    className="w-full px-4 py-2 rounded-xl border border-gray-300 bg-white focus:outline-none appearance-none"
+                    placeholder="doctor@organization.com"
+                    className="w-full px-4 py-2 rounded-xl border border-gray-300 bg-white focus:outline-none"
                     required
                   />
                 </div>
@@ -144,58 +244,41 @@ const Signup = () => {
 
             <div>
               <label className="text-sm font-bold text-gray-600">
-                Phone Number <span className="text-red-500">*</span>
+                Organization <span className="text-red-500">*</span>
               </label>
-              <div className="mt-1 rounded-xl transition-all">
+              <div className="mt-1 rounded-xl">
+                <div className="group focus-within:bg-gradient-to-r focus-within:from-sky-300 focus-within:via-teal-300 focus-within:to-rose-300 p-[2px] rounded-xl appearance-none">
+                  <input
+                    type="text"
+                    value={organization}
+                    onChange={(e) => setOrganization(e.target.value)}
+                    placeholder="Organization or Institute Name"
+                    className="w-full px-4 py-2 rounded-xl border border-gray-300 bg-white focus:outline-none"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label className="text-sm font-bold text-gray-600">Phone Number</label>
+              <div className="mt-1 rounded-xl">
                 <div className="group focus-within:bg-gradient-to-r focus-within:from-sky-300 focus-within:via-teal-300 focus-within:to-rose-300 p-[2px] rounded-xl appearance-none">
                   <input
                     type="tel"
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
                     placeholder="+1 (800) 555-1234"
-                    className="w-full px-4 py-2 rounded-xl border border-gray-300 bg-white focus:outline-none appearance-none"
-                    required
+                    className="w-full px-4 py-2 rounded-xl border border-gray-300 bg-white focus:outline-none"
                   />
                 </div>
               </div>
             </div>
 
             <div>
-              <label className="text-sm font-bold text-gray-600">Clinic Name</label>
-              <div className="mt-1 rounded-xl transition-all">
-                <div className="group focus-within:bg-gradient-to-r focus-within:from-sky-300 focus-within:via-teal-300 focus-within:to-rose-300 p-[2px] rounded-xl appearance-none">
-                  <input
-                    type="text"
-                    value={clinicName}
-                    onChange={(e) => setClinicName(e.target.value)}
-                    placeholder="Dr. Smith's Clinic"
-                    className="w-full px-4 py-2 rounded-xl border border-gray-300 bg-white focus:outline-none appearance-none"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="relative">
               <label className="text-sm font-bold text-gray-600">Clinic Type</label>
-              <div className="mt-1 rounded-xl transition-all">
-                <div className="group focus-within:bg-gradient-to-r focus-within:from-sky-300 focus-within:via-teal-300 focus-within:to-rose-300 p-[2px] rounded-xl appearance-none">
-                  <select
-                    value={clinicType}
-                    onChange={(e) => setClinicType(e.target.value)}
-                    className="w-full px-4 py-2 rounded-xl border border-gray-300 bg-white shadow-sm pr-10 focus:outline-none appearance-none"
-                  >
-                    <option value="">Select clinic type</option>
-                    <option value="Dental">Dental</option>
-                    <option value="GP">GP</option>
-                    <option value="Pediatric">Pediatric</option>
-                    <option value="Dermatology">Dermatology</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
-                <div className="pointer-events-none absolute right-3 top-9 text-gray-500">▼</div>
-              </div>
+              <CustomDropdown value={clinicType} onChange={setClinicType} />
             </div>
-
 
             {error && <p className="text-red-500 text-sm">{error}</p>}
 
