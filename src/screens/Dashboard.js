@@ -100,11 +100,11 @@ const Dashboard = () => {
       </div>
 
       {/* Call Buttons */}
-      <div className="flex flex-wrap gap-4 justify-center mt-8">
+      <div className="w-full max-w-md mt-8 flex flex-col sm:flex-row gap-4">
         <button
           onClick={toggleCall}
           disabled={isBusy}
-          className={`px-6 sm:px-10 py-3 sm:py-4 text-[clamp(1rem,2.5vw,1.25rem)] font-semibold rounded-2xl transition-all duration-300 shadow-lg ${
+          className={`w-full text-[clamp(1rem,2.5vw,1.25rem)] font-semibold rounded-2xl transition-all duration-300 shadow-lg px-6 py-4 ${
             isConnected
               ? 'bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white'
               : 'bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-white'
@@ -120,48 +120,25 @@ const Dashboard = () => {
         </button>
 
         <button
-          className={`px-6 sm:px-10 py-3 sm:py-4 text-[clamp(1rem,2.5vw,1.25rem)] font-semibold rounded-2xl transition-all duration-300 shadow-lg ${
-            isConnected
-              ? 'bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white'
-              : 'bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-white'
-          } ${isBusy ? 'opacity-50 cursor-not-allowed' : 'hover:-translate-y-1 hover:shadow-xl'}`}
+          disabled={isBusy}
+          className={`w-full text-[clamp(1rem,2.5vw,1.25rem)] font-semibold rounded-2xl px-6 py-4 shadow-lg transition-all duration-300 
+            bg-gradient-to-r from-teal-500 to-emerald-500 
+            hover:from-teal-600 hover:to-emerald-600 
+            text-white
+            ${isBusy || isConnected ? 'opacity-50 cursor-not-allowed shadow-inner' : 'hover:-translate-y-1 hover:shadow-xl'}`}
+            
         >
-          📲 {status === 'connecting'
-            ? 'Connecting...'
-            : status === 'disconnecting'
-            ? 'Ending Call...'
-            : isConnected
-            ? 'End Call'
-            : 'Incoming Call from Voxllera'}
+          📲 Incoming Call from Voxllera
         </button>
+
       </div>
 
-      {/* Status Indicators */}
-      <div className="mt-4 space-y-9">
-        {isConnected && (
-          speaking ? (
-            <div className="flex items-center justify-center gap-3 text-blue-600 bg-blue-50 px-4 py-2 rounded-full">
-              <Volume2 size={20} className="animate-bounce" />
-              <span className="font-medium">Agent Speaking...</span>
-            </div>
-          ) : (
-            <div className="flex items-center justify-center gap-3 text-teal-600 bg-teal-50 px-4 py-2 rounded-full">
-              <Mic size={20} className="animate-pulse" />
-              <span className="font-medium">Listening...</span>
-            </div>
-          )
-        )}
-        {!isMicGranted && status === 'disconnected' && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-full text-sm">
-            🎤 Microphone access is required to proceed
-          </div>
-        )}
-      </div>
 
       {/* Footer */}
-      <footer className="mt-4 text-sm text-slate-600">
-        <span className="ml-2 text-slate-500 font-medium">Voxllera Healthcare AI</span>
+      <footer className="mt-4 text-sm text-slate-600 text-center">
+        <span className="text-slate-500 font-medium">Voxllera Healthcare AI</span>
       </footer>
+
 
       {/* Animations */}
       <style jsx>{`
