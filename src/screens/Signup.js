@@ -5,7 +5,7 @@ import '../index.css';
 import '../styles.css';
 
 const SHEET_URL =
-  'https://script.google.com/macros/s/AKfycby0vUPNj1o7fp2zYxK08IN-0NwaDPOtHJJzL7RkPngsuiXgN6iWjdyUOENG33jpYQP2/exec';
+  'https://script.google.com/macros/s/AKfycbywQsbP0EfaQPv6c4tZ9ZpTcK39dDlNOKX-BV4pwKD8qWpz_tjsD3bOWrWkmHDcwkwT/exec';
 
 const clinicOptions = ['Dental', 'GP', 'Pediatric', 'Dermatology', 'Other'];
 
@@ -69,36 +69,36 @@ const CustomDropdown = ({ value, onChange }) => {
   return (
     <div className="relative w-full mt-1 rounded-xl">
       <div className="group focus-within:bg-gradient-to-r focus-within:from-sky-300 focus-within:via-teal-300 focus-within:to-rose-300 p-[2px] rounded-xl appearance-none">
-      <button
-        type="button"
-        ref={buttonRef}
-        onClick={toggleDropdown}
-        className="w-full px-4 py-2 bg-white border border-gray-300 rounded-xl text-left focus:outline-none shadow-sm"
-      >
-        {value || 'Select clinic type'}
-        <span className="float-right text-gray-500">▼</span>
-      </button>
-
-      {isOpen && (
-        <ul
-          ref={dropdownRef}
-          className={`absolute z-50 w-full bg-white border border-gray-300 rounded-xl shadow-md max-h-60 overflow-y-auto transition-all ${
-            direction === 'up' ? 'bottom-full mb-2' : 'top-full mt-2'
-          }`}
+        <button
+          type="button"
+          ref={buttonRef}
+          onClick={toggleDropdown}
+          className="w-full px-4 py-2 bg-white border border-gray-300 rounded-xl text-left focus:outline-none shadow-sm"
         >
-          {clinicOptions.map((option) => (
-            <li
-              key={option}
-              onClick={() => handleOptionClick(option)}
-              className={`px-4 py-2 cursor-pointer hover:bg-gray-100 ${
-                option === value ? 'font-semibold text-teal-700' : ''
-              }`}
-            >
-              {option}
-            </li>
-          ))}
-        </ul>
-      )}
+          {value || 'Select clinic type'}
+          <span className="float-right text-gray-500">▼</span>
+        </button>
+
+        {isOpen && (
+          <ul
+            ref={dropdownRef}
+            className={`absolute z-50 w-full bg-white border border-gray-300 rounded-xl shadow-md max-h-60 overflow-y-auto transition-all ${
+              direction === 'up' ? 'bottom-full mb-2' : 'top-full mt-2'
+            }`}
+          >
+            {clinicOptions.map((option) => (
+              <li
+                key={option}
+                onClick={() => handleOptionClick(option)}
+                className={`px-4 py-2 cursor-pointer hover:bg-gray-100 ${
+                  option === value ? 'font-semibold text-teal-700' : ''
+                }`}
+              >
+                {option}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   );
@@ -111,13 +111,11 @@ const Signup = () => {
   const [organization, setOrganization] = useState('');
   const [contactPerson, setContactPerson] = useState('');
   const [email, setEmail] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
   const [clinicType, setClinicType] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const phoneRegex = /^\+?[0-9\s\-().]{7,20}$/;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -128,10 +126,6 @@ const Signup = () => {
     }
     if (!emailRegex.test(email)) {
       setError('Please enter a valid email.');
-      return;
-    }
-    if (phoneNumber && !phoneRegex.test(phoneNumber)) {
-      setError('Please enter a valid phone number.');
       return;
     }
 
@@ -146,7 +140,6 @@ const Signup = () => {
           organization,
           contactPerson,
           email,
-          phoneNumber,
           clinicType,
         }),
       });
@@ -216,7 +209,7 @@ const Signup = () => {
                     type="text"
                     value={contactPerson}
                     onChange={(e) => setContactPerson(e.target.value)}
-                    placeholder="Dr. John Smith"
+                    placeholder="Your Name"
                     className="w-full px-4 py-2 rounded-xl border border-gray-300 bg-white focus:outline-none"
                     required
                   />
@@ -234,7 +227,7 @@ const Signup = () => {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="doctor@organization.com"
+                    placeholder="you@organization.com"
                     className="w-full px-4 py-2 rounded-xl border border-gray-300 bg-white focus:outline-none"
                     required
                   />
@@ -255,21 +248,6 @@ const Signup = () => {
                     placeholder="Organization or Institute Name"
                     className="w-full px-4 py-2 rounded-xl border border-gray-300 bg-white focus:outline-none"
                     required
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <label className="text-sm font-bold text-gray-600">Phone Number</label>
-              <div className="mt-1 rounded-xl">
-                <div className="group focus-within:bg-gradient-to-r focus-within:from-sky-300 focus-within:via-teal-300 focus-within:to-rose-300 p-[2px] rounded-xl appearance-none">
-                  <input
-                    type="tel"
-                    value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
-                    placeholder="+1 (800) 555-1234"
-                    className="w-full px-4 py-2 rounded-xl border border-gray-300 bg-white focus:outline-none"
                   />
                 </div>
               </div>
