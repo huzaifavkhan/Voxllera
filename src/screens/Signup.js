@@ -201,7 +201,7 @@ const Signup = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="text-sm font-bold text-gray-600">
-                Contact Person <span className="text-red-500">*</span>
+                Name <span className="text-red-500">*</span>
               </label>
               <div className="mt-1 rounded-xl">
                 <div className="group focus-within:bg-gradient-to-r focus-within:from-sky-300 focus-within:via-teal-300 focus-within:to-rose-300 p-[2px] rounded-xl appearance-none">
