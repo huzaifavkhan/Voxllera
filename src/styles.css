@@ -1,0 +1,55 @@
+:root {
+  /* Primary & Secondary */
+  --color-primary: #6CA0DC;      /* Soft Blue (text AA on white) */
+  --color-secondary: #7EBDA5;    /* Muted Teal (text AA on white) */
+
+  /* Accent & Feedback */
+  --color-accent: #E8D7B9;       /* Warm Neutral */
+  --color-error: #E07A5F;        /* Coral Red for errors/negatives */
+
+  /* Neutrals */
+  --color-bg: #F5F5F5;           /* Light Gray */
+  --color-surface: #FFFFFF;      /* White surfaces */
+  --color-text: #2F3E46;         /* Dark Slate */
+  --color-text-muted: #4A5A64;   /* 60% opacity on text */
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Open+Sans:wght@400;600&display=swap');
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+h1, h2, h3, h4, h5 {
+  font-family: 'Inter', sans-serif;
+  color: var(--color-text);
+}
+
+.container {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 16px; /* 2× base unit */
+  padding: 16px;
+}
+
+/* styles.css */
+@keyframes loading-bar {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-loading-bar {
+  animation: loading-bar 1.5s infinite linear;
+  width: 100%;
+}
+
+.focus-gradient-ring:focus {
+  box-shadow: 0 0 0 3px transparent, 0 0 0 5px linear-gradient(to right, #0c4a6e, #0f766e, #881337);
+  /* fallback if gradient doesn't apply */
+  border-image: linear-gradient(to right, #0c4a6e, #0f766e, #881337) 1;
+}
